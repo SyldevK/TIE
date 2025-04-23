@@ -7,6 +7,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+
+
+#[ApiResource(
+    normalizationContext: ['groups' => ['event:read']],
+    denormalizationContext: ['groups' => ['event:write']]
+)]
+#[ApiFilter(BooleanFilter::class, properties: ['isVisible'])]
+#[ApiFilter(SearchFilter::class, properties: ['lieu' => 'partial'])]
+#[ApiFilter(DateFilter::class, properties: ['dateEvent'])]
+
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
@@ -16,25 +32,32 @@ class Event
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
+    #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateEvent = null;
 
+    #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(length: 255)]
     private ?string $lieu = null;
 
+    #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageUrl = null;
 
+    #[Groups(['event:read'])]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
+    #[Groups(['event:read', 'event:write'])]
+    #[ORM\Column(type: 'boolean')]
     private ?bool $isVisible = null;
 
     /**

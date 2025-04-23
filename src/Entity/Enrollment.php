@@ -19,8 +19,8 @@ class Enrollment
     #[ORM\Column]
     private ?bool $isActive = null;
 
-    #[ORM\Column]
-    private ?int $anneeScolaire = null;
+    #[ORM\Column(length: 255)]
+    private ?string $anneeScolaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'enrollments')]
     #[ORM\JoinColumn(nullable: false)]
@@ -58,12 +58,12 @@ class Enrollment
         return $this;
     }
 
-    public function getAnneeScolaire(): ?int
+    public function getAnneeScolaire(): ?string
     {
         return $this->anneeScolaire;
     }
 
-    public function setAnneeScolaire(int $anneeScolaire): static
+    public function setAnneeScolaire(string $anneeScolaire): static
     {
         $this->anneeScolaire = $anneeScolaire;
 
