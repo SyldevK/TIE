@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
@@ -23,6 +24,10 @@ class Media
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\File(
+        mimeTypes: ["image/jpeg", "image/png", "image/webp"],
+        mimeTypesMessage: "Seules les images JPG, PNG ou WebP sont autorisées."
+    )]
     private ?string $url = null;
 
     #[ORM\ManyToOne(inversedBy: 'media')]
