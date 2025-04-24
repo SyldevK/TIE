@@ -4,6 +4,13 @@ namespace App\Entity;
 
 use App\Repository\EnrollmentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+
+#[ApiResource(
+    normalizationContext: ['groups' => ['enrollment:read']],
+    denormalizationContext: ['groups' => ['enrollment:write']]
+)]
 
 #[ORM\Entity(repositoryClass: EnrollmentRepository::class)]
 class Enrollment
@@ -14,19 +21,24 @@ class Enrollment
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['enrollment:read', 'enrollment:write'])]
     private ?string $groupe = null;
 
     #[ORM\Column]
+    #[Groups(['enrollment:read', 'enrollment:write'])]
     private ?bool $isActive = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['enrollment:read', 'enrollment:write'])]
     private ?string $anneeScolaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'enrollments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['enrollment:read', 'enrollment:write'])]
     private ?User $user = null;
 
     #[ORM\OneToOne(mappedBy: 'enrollment', cascade: ['persist', 'remove'])]
+    #[Groups(['enrollment:read'])]
     private ?Participant $participant = null;
 
     public function getId(): ?int
