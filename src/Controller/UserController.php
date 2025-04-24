@@ -16,7 +16,6 @@ class UserController extends AbstractController
     public function me(SerializerInterface $serializer, UserInterface $user): JsonResponse
     {
         $data = $serializer->serialize($user, 'json', ['groups' => ['user:read']]);
-
         return new JsonResponse($data, 200, [], true);
     }
 }
