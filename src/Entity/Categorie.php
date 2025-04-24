@@ -20,6 +20,7 @@ class Categorie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['categorie:read', 'media:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

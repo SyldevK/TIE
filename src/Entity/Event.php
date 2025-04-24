@@ -30,6 +30,7 @@ class Event
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['event:read', 'reservation:read', 'media:read'])]
     private ?int $id = null;
 
     #[Groups(['event:read', 'event:write'])]

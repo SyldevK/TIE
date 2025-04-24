@@ -5,6 +5,13 @@ namespace App\Entity;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+
+#[ApiResource(
+    normalizationContext: ['groups' => ['enrollment:read']],
+    denormalizationContext: ['groups' => ['enrollment:write']]
+)]
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
@@ -12,15 +19,19 @@ class Media
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['media:read', 'event:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['enrollment:read', 'enrollment:write'])]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['enrollment:read', 'enrollment:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['media:read', 'media:write'])]
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
@@ -28,13 +39,16 @@ class Media
         mimeTypes: ["image/jpeg", "image/png", "image/webp"],
         mimeTypesMessage: "Seules les images JPG, PNG ou WebP sont autorisées."
     )]
+    #[Groups(['media:read', 'media:write', 'event:read'])]
     private ?string $url = null;
 
     #[ORM\ManyToOne(inversedBy: 'media')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['media:read', 'media:write'])]
     private ?Categorie $categorie = null;
 
     #[ORM\ManyToOne(inversedBy: 'media')]
+    #[Groups(['media:read', 'media:write'])]
     private ?Event $event = null;
 
     public function getId(): ?int

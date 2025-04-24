@@ -5,6 +5,13 @@ namespace App\Entity;
 use App\Repository\ParticipantRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+
+#[ApiResource(
+    normalizationContext: ['groups' => ['enrollment:read']],
+    denormalizationContext: ['groups' => ['enrollment:write']]
+)]
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 class Participant
@@ -12,19 +19,24 @@ class Participant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['participant:read', 'enrollment:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['participant:read', 'participant:write', 'enrollment:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['participant:read', 'participant:write', 'enrollment:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['participant:read', 'participant:write'])]
     private ?\DateTimeInterface $dateNaissance = null;
 
     #[ORM\OneToOne(inversedBy: 'participant', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['participant:read', 'participant:write'])]
     private ?Enrollment $enrollment = null;
 
     public function getId(): ?int
