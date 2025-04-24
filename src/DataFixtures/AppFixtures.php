@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
             $user->setPrenom($faker->firstName());
             $user->setEmail($faker->email());
             $user->setPassword($this->passwordHasher->hashPassword($user, 'test1234'));
-            $user->setRole('parent');
+            $user->setRole('ROLE_USER');
             $user->setDateInscription(new \DateTime($faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d H:i:s')));
             $user->setIsVerified(true);
 

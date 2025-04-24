@@ -16,6 +16,7 @@ security:
         login:
             pattern: ^/api/login
             stateless: true
+            provider: app_user_provider
             json_login:
                 check_path: /api/login
                 username_path: email
@@ -29,10 +30,14 @@ security:
             jwt: ~
 
     access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/contexts, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }      
         - { path: ^/api/reservations, roles: ROLE_USER }
         - { path: ^/api/enrollments, roles: ROLE_USER }
-        - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/(?!docs|contexts|login).*, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

@@ -5,6 +5,14 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+#[ApiResource(
+    normalizationContext: ['groups' => ['reservation:read']],
+    denormalizationContext: ['groups' => ['reservation:write']]
+)]
+
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -14,9 +22,11 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column]
     private ?int $nombrePlaces = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateReservation = null;
 
