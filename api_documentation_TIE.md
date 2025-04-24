@@ -1,4 +1,27 @@
 
+# 🎭 API - Projet Théâtre TIE
+
+Bienvenue dans la documentation de l'API du projet TIE (Théâtre Intergénérationnel Éducatif), une plateforme de gestion de cours et spectacles de théâtre pour enfants, adolescents et adultes.
+
+## ✨ Objectif
+Cette API permet :
+- Aux visiteurs de consulter les événements (sans se connecter)
+- Aux utilisateurs inscrits de réserver ou s’inscrire à un atelier
+- Aux administrateurs de gérer le contenu (événements, médias, utilisateurs…)
+
+## 👥 Rôles et accès
+- `Invité` : accès en lecture seule (événements, médias…)
+- `Utilisateur` (`ROLE_USER`) : peut réserver, s’inscrire à un atelier, consulter son profil
+- `Administrateur` (`ROLE_ADMIN`) : peut gérer les événements, médias, catégories, utilisateurs, etc.
+
+## 🧭 Utilisation recommandée
+- Toutes les requêtes protégées nécessitent un token JWT (login via `/api/login`)
+- Pour les tests, Swagger est disponible sur `/api` (penser à s’autoriser avec le token)
+- Les relations entre entités sont au format `/api/{ressource}/{id}`
+
+---
+
+
 # Documentation de l'API - Projet Théâtre TIE
 
 ## Routes GET
