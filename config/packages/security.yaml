@@ -44,6 +44,7 @@ security:
     # Accès aux utilisateurs connectés    
         - { path: ^/api/reservations, roles: ROLE_USER }
         - { path: ^/api/enrollments, roles: ROLE_USER }
+        - { path: ^/api/me, roles: ROLE_USER }
 
     # Fallback général pour toutes les autres routes protégées
         - { path: ^/api/(?!docs|contexts|login).*, roles: IS_AUTHENTICATED_FULLY }
