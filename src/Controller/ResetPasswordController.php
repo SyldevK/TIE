@@ -55,10 +55,10 @@ class ResetPasswordController extends AbstractController
         <p>Vous avez demandé à réinitialiser votre mot de passe pour accéder à votre compte La Troupe des Échappées.</p>
         <p>Veuillez cliquer sur le bouton ci-dessous :</p>
         <p>
-            <a href="https://latroupedesechappees.fr/reset-password?token=' . $resetToken->getToken() . '" 
-               style="background-color:#6A0DAD;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;font-family:Poppins;font-size:16px;">
-                Réinitialiser mon mot de passe
-            </a>
+            <a href="troupedesechappees://reset-password?token=' . $resetToken->getToken() . '" 
+            style="background-color:#6A0DAD;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;font-family:Poppins;font-size:16px;">
+             Réinitialiser mon mot de passe
+        </a>
         </p>
         <p>Si vous n\'avez pas demandé cette réinitialisation, ignorez simplement cet e-mail.</p>
         <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
