@@ -23,6 +23,10 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        public:
+            pattern: ^/api/(register|forgot-password|reset-password|docs|contexts)
+            stateless: true
+            provider: app_user_provider
 
         api:
             pattern: ^/api
@@ -33,12 +37,12 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
 
     # Auth et accès publics
-        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/forgot-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/reset-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/contexts, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/forgot-password, roles: PUBLIC_ACCESS }
+        - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
         
 
     # Logs : réservés aux admins
