@@ -93,6 +93,20 @@ class ResetPasswordController extends AbstractController
         $this->entityManager->flush();
         $this->resetPasswordHelper->removeResetRequest($token);
 
+        // ✉️ Nouveau : Envoi d'un mail de confirmation
+        $confirmationEmail = (new Email())
+            ->from('noreply@latroupedesechappees.fr')
+            ->to($user->getEmail())
+            ->subject('Votre mot de passe a été changé')
+            ->html('
+            <p>Bonjour,</p>
+            <p>Votre mot de passe a été modifié avec succès pour votre compte La Troupe des Échappées.</p>
+            <p>Si vous n\'êtes pas à l\'origine de ce changement, veuillez nous contacter immédiatement.</p>
+            <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
+        ');
+
+        $this->mailer->send($confirmationEmail);
+
         return $this->json(['message' => 'Mot de passe réinitialisé avec succès.']);
     }
 }
