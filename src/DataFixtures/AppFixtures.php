@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
             $user->setPrenom($faker->firstName());
             $user->setEmail($faker->email());
             $user->setPassword($this->passwordHasher->hashPassword($user, 'test1234'));
-            $user->setRole('ROLE_USER');
+            $user->setRoles(['ROLE_USER']);
             $user->setDateInscription(new \DateTime($faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d H:i:s')));
             $user->setIsVerified(true);
 
@@ -84,8 +84,8 @@ class AppFixtures extends Fixture
             $user = $users[array_rand($users)];
             $event = $events[array_rand($events)];
 
-            $reservation->setUser($user);   // Relation Effectuer
-            $reservation->setEvent($event); // Relation Contenir
+            $reservation->setUser($user);
+            $reservation->setEvent($event);
 
             $manager->persist($reservation);
         }

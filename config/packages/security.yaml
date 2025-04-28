@@ -34,9 +34,12 @@ security:
 
     # Auth et accès publics
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/forgot-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/reset-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/contexts, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        
 
     # Logs : réservés aux admins
         - { path: ^/api/logs, roles: ROLE_ADMIN }
