@@ -35,6 +35,7 @@ class AppFixtures extends Fixture
             $user->setRoles(['ROLE_USER']);
             $user->setDateInscription(new \DateTime($faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d H:i:s')));
             $user->setIsVerified(true);
+            $user->setVerificationToken(null);
 
             $manager->persist($user);
             $users[] = $user;

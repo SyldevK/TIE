@@ -54,6 +54,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?bool $isVerified = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $verificationToken = null;
+
     /**
      * @var Collection<int, Reservation>
      */
@@ -153,6 +157,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isVerified = $isVerified;
 
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $token): self
+    {
+        $this->verificationToken = $token;
         return $this;
     }
 

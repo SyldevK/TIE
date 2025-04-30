@@ -11,6 +11,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Mailer\MailerInterface;
+use Twig\Environment;
+use Symfony\Component\Mime\Email;
 
 #[AsController]
 class RegistrationController
@@ -20,7 +23,9 @@ class RegistrationController
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        MailerInterface $mailer,
+        Environment $twig
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -42,24 +47,46 @@ class RegistrationController
             return new JsonResponse(['message' => 'Adresse e-mail invalide'], 400);
         }
 
-        // Vérifie si un utilisateur existe déjà avec cet email
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($existingUser) {
             return new JsonResponse(['message' => 'Email déjà utilisé'], 409);
         }
 
+        // ✅ Création du nouvel utilisateur
         $user = new User();
         $user->setEmail($email);
         $user->setRoles(['ROLE_USER']);
         $user->setNom($nom);
         $user->setPrenom($prenom);
-        $user->setIsVerified(false); // initialisation explicite
+        $user->setIsVerified(false);
+
+        // ✅ Génération du token de vérification
+        $token = bin2hex(random_bytes(32));
+        $user->setVerificationToken($token);
+
         $user->setPassword(
             $passwordHasher->hashPassword($user, $password)
         );
 
         $entityManager->persist($user);
         $entityManager->flush();
+
+        // ✅ Lien de vérification
+        $verificationLink = 'http://tie.test/verify-email?token=' . $token;
+
+        // ✅ Envoi de l’e-mail HTML
+        $html = $twig->render('emails/confirmation_email.html.twig', [
+            'prenom' => $user->getPrenom(),
+            'link' => $verificationLink,
+        ]);
+
+        $emailMessage = (new Email())
+            ->from('no-reply@tie.test')
+            ->to($user->getEmail())
+            ->subject('Confirmez votre adresse e-mail')
+            ->html($html);
+
+        $mailer->send($emailMessage);
 
         return new JsonResponse(['message' => 'Utilisateur créé avec succès'], 201);
     }
