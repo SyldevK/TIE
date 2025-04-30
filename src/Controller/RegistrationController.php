@@ -26,32 +26,34 @@ class RegistrationController
 
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
+        $nom = $data['nom'] ?? null;
+        $prenom = $data['prenom'] ?? null;
 
-        // Vérification rapide des champs
-        if (!$email || !$password) {
-            return new JsonResponse(['message' => 'Email and password are required'], 400);
+        if (!$email || !$password || !$nom || !$prenom) {
+            return new JsonResponse(['message' => 'Tous les champs sont requis'], 400);
         }
 
-        // Validation de l'email (format correct)
         $violations = $validator->validate($email, [
             new Assert\NotBlank(),
-            new Assert\Email()
+            new Assert\Email(),
         ]);
 
         if (count($violations) > 0) {
-            return new JsonResponse(['message' => 'Invalid email address'], 400);
+            return new JsonResponse(['message' => 'Adresse e-mail invalide'], 400);
         }
 
-        // Vérification si un utilisateur existe déjà
+        // Vérifie si un utilisateur existe déjà avec cet email
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($existingUser) {
-            return new JsonResponse(['message' => 'Email already used'], 409); // 409 Conflict
+            return new JsonResponse(['message' => 'Email déjà utilisé'], 409);
         }
 
-        // Création du nouvel utilisateur
         $user = new User();
         $user->setEmail($email);
         $user->setRoles(['ROLE_USER']);
+        $user->setNom($nom);
+        $user->setPrenom($prenom);
+        $user->setIsVerified(false); // initialisation explicite
         $user->setPassword(
             $passwordHasher->hashPassword($user, $password)
         );
@@ -59,6 +61,6 @@ class RegistrationController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'User created successfully'], 201);
+        return new JsonResponse(['message' => 'Utilisateur créé avec succès'], 201);
     }
 }
