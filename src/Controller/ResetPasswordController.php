@@ -15,42 +15,42 @@ use Symfony\Component\Mime\Email;
 
 class ResetPasswordController extends AbstractController
 {
-    private ResetPasswordHelperInterface $resetPasswordHelper;
-    private MailerInterface $mailer;
-    private EntityManagerInterface $entityManager;
+  private ResetPasswordHelperInterface $resetPasswordHelper;
+  private MailerInterface $mailer;
+  private EntityManagerInterface $entityManager;
 
-    public function __construct(ResetPasswordHelperInterface $resetPasswordHelper, MailerInterface $mailer, EntityManagerInterface $entityManager)
-    {
-        $this->resetPasswordHelper = $resetPasswordHelper;
-        $this->mailer = $mailer;
-        $this->entityManager = $entityManager;
+  public function __construct(ResetPasswordHelperInterface $resetPasswordHelper, MailerInterface $mailer, EntityManagerInterface $entityManager)
+  {
+    $this->resetPasswordHelper = $resetPasswordHelper;
+    $this->mailer = $mailer;
+    $this->entityManager = $entityManager;
+  }
+
+  #[Route('/api/forgot-password', name: 'api_forgot_password', methods: ['POST'])]
+  public function forgotPassword(Request $request, UserRepository $userRepository): JsonResponse
+  {
+    $data = json_decode($request->getContent(), true);
+    $email = $data['email'] ?? '';
+
+    if (!$email) {
+      return $this->json(['error' => 'Email requis'], 400);
     }
 
-    #[Route('/api/forgot-password', name: 'api_forgot_password', methods: ['POST'])]
-    public function forgotPassword(Request $request, UserRepository $userRepository): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $email = $data['email'] ?? '';
+    $user = $userRepository->findOneBy(['email' => $email]);
 
-        if (!$email) {
-            return $this->json(['error' => 'Email requis'], 400);
-        }
+    if (!$user) {
+      // Pour ne pas révéler si un utilisateur existe ou non
+      return $this->json(['message' => 'Si cet email existe, un lien a été envoyé.']);
+    }
 
-        $user = $userRepository->findOneBy(['email' => $email]);
+    $resetToken = $this->resetPasswordHelper->generateResetToken($user);
 
-        if (!$user) {
-            // Pour ne pas révéler si un utilisateur existe ou non
-            return $this->json(['message' => 'Si cet email existe, un lien a été envoyé.']);
-        }
-
-        $resetToken = $this->resetPasswordHelper->generateResetToken($user);
-
-        // Envoi de l'email
-        $emailMessage = (new Email())
-            ->from('noreply@latroupedesechappees.fr')
-            ->to($user->getEmail())
-            ->subject('Réinitialisation de votre mot de passe')
-            ->html('
+    // Envoi de l'email
+    $emailMessage = (new Email())
+      ->from('noreply@latroupedesechappees.fr')
+      ->to($user->getEmail())
+      ->subject('Réinitialisation de votre mot de passe')
+      ->html('
         <p>Bonjour,</p>
         <p>Vous avez demandé à réinitialiser votre mot de passe pour accéder à votre compte La Troupe des Échappées.</p>
         <p>Veuillez cliquer sur le bouton ci-dessous :</p>
@@ -64,49 +64,49 @@ class ResetPasswordController extends AbstractController
         <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
     ');
 
-        $this->mailer->send($emailMessage);
+    $this->mailer->send($emailMessage);
 
-        return $this->json(['message' => 'Si cet email existe, un lien a été envoyé.']);
+    return $this->json(['message' => 'Si cet email existe, un lien a été envoyé.']);
+  }
+
+  #[Route('/api/reset-password', name: 'api_reset_password', methods: ['POST'])]
+  public function resetPassword(Request $request, UserRepository $userRepository): JsonResponse
+  {
+    $data = json_decode($request->getContent(), true);
+    $token = $data['token'] ?? '';
+    $newPassword = $data['password'] ?? '';
+
+    if (!$token || !$newPassword) {
+      return $this->json(['error' => 'Token et nouveau mot de passe requis.'], 400);
     }
 
-    #[Route('/api/reset-password', name: 'api_reset_password', methods: ['POST'])]
-    public function resetPassword(Request $request, UserRepository $userRepository): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $token = $data['token'] ?? '';
-        $newPassword = $data['password'] ?? '';
+    try {
+      $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+    } catch (\Exception $e) {
+      return $this->json(['error' => 'Token invalide ou expiré.'], 400);
+    }
 
-        if (!$token || !$newPassword) {
-            return $this->json(['error' => 'Token et nouveau mot de passe requis.'], 400);
-        }
+    $user->setPassword(
+      password_hash($newPassword, PASSWORD_BCRYPT)
+    );
 
-        try {
-            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Token invalide ou expiré.'], 400);
-        }
+    $this->entityManager->flush();
+    $this->resetPasswordHelper->removeResetRequest($token);
 
-        $user->setPassword(
-            password_hash($newPassword, PASSWORD_BCRYPT)
-        );
-
-        $this->entityManager->flush();
-        $this->resetPasswordHelper->removeResetRequest($token);
-
-        // ✉️ Nouveau : Envoi d'un mail de confirmation
-        $confirmationEmail = (new Email())
-            ->from('noreply@latroupedesechappees.fr')
-            ->to($user->getEmail())
-            ->subject('Votre mot de passe a été changé')
-            ->html('
+    // ✉️ Nouveau : Envoi d'un mail de confirmation
+    $confirmationEmail = (new Email())
+      ->from('noreply@latroupedesechappees.fr')
+      ->to($user->getEmail())
+      ->subject('Votre mot de passe a été changé')
+      ->html('
             <p>Bonjour,</p>
             <p>Votre mot de passe a été modifié avec succès pour votre compte La Troupe des Échappées.</p>
             <p>Si vous n\'êtes pas à l\'origine de ce changement, veuillez nous contacter immédiatement.</p>
             <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
         ');
 
-        $this->mailer->send($confirmationEmail);
+    $this->mailer->send($confirmationEmail);
 
-        return $this->json(['message' => 'Mot de passe réinitialisé avec succès.']);
-    }
+    return $this->json(['message' => 'Mot de passe réinitialisé avec succès.']);
+  }
 }

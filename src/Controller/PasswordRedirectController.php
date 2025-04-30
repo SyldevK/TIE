@@ -15,11 +15,18 @@ class PasswordRedirectController
         $token = $request->query->get('token');
 
         if (!$token) {
-
-            return new RedirectResponse('http://tie.test/page-lien-invalide');
+            return new RedirectResponse('http://tie.test/index.html#/page-lien-invalide');
         }
 
-        return new RedirectResponse("troupedesechappees://reset-password?token=$token");
+        // Détection mobile simple via User-Agent
+        $ua = strtolower($request->headers->get('User-Agent', ''));
+        $isMobile = str_contains($ua, 'android') || str_contains($ua, 'iphone');
+
+        if ($isMobile) {
+            return new RedirectResponse("troupedesechappees://reset-password?token=$token");
+        }
+
+        return new RedirectResponse("http://tie.test/index.html#/reset-password?token=$token");
     }
 
     #[Route('/page-lien-invalide', name: 'invalid_link')]

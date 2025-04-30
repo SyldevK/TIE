@@ -33,6 +33,8 @@ class RegistrationController
         $password = $data['password'] ?? null;
         $nom = $data['nom'] ?? null;
         $prenom = $data['prenom'] ?? null;
+        $platform = $data['platform'] ?? 'web';
+
 
         if (!$email || !$password || !$nom || !$prenom) {
             return new JsonResponse(['message' => 'Tous les champs sont requis'], 400);
@@ -52,7 +54,7 @@ class RegistrationController
             return new JsonResponse(['message' => 'Email déjà utilisé'], 409);
         }
 
-        // ✅ Création du nouvel utilisateur
+        // Création du nouvel utilisateur
         $user = new User();
         $user->setEmail($email);
         $user->setRoles(['ROLE_USER']);
@@ -60,7 +62,7 @@ class RegistrationController
         $user->setPrenom($prenom);
         $user->setIsVerified(false);
 
-        // ✅ Génération du token de vérification
+        // Génération du token de vérification
         $token = bin2hex(random_bytes(32));
         $user->setVerificationToken($token);
 
@@ -72,7 +74,12 @@ class RegistrationController
         $entityManager->flush();
 
         // ✅ Lien de vérification
-        $verificationLink = 'http://tie.test/verify-email?token=' . $token;
+        if ($platform === 'mobile') {
+            $verificationLink = 'troupedesechappees://reset-password?token=' . $token;
+        } else {
+            $verificationLink = 'http://tie.test/verify-email?token=' . $token;
+        }
+
 
         // ✅ Envoi de l’e-mail HTML
         $html = $twig->render('emails/confirmation_email.html.twig', [
@@ -86,7 +93,13 @@ class RegistrationController
             ->subject('Confirmez votre adresse e-mail')
             ->html($html);
 
-        $mailer->send($emailMessage);
+        try {
+            $mailer->send($emailMessage);
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'message' => 'Erreur lors de l\'envoi de l’e-mail : ' . $e->getMessage(),
+            ], 500);
+        }
 
         return new JsonResponse(['message' => 'Utilisateur créé avec succès'], 201);
     }

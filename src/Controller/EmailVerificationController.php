@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 class EmailVerificationController
 {
     #[Route('/verify-email', name: 'verify_email')]
@@ -17,13 +18,13 @@ class EmailVerificationController
         $token = $request->query->get('token');
 
         if (!$token) {
-            return new RedirectResponse('http://tie.test/#/erreur-verification');
+            return new RedirectResponse('http://tie.test/index.html#/verification-ok');
         }
 
         $user = $entityManager->getRepository(User::class)->findOneBy(['verificationToken' => $token]);
 
         if (!$user) {
-            return new RedirectResponse('http://tie.test/#/erreur-verification');
+            return new RedirectResponse('http://tie.test/index.html#/verification-ok');
         }
 
         $user->setIsVerified(true);
@@ -38,6 +39,6 @@ class EmailVerificationController
             return new RedirectResponse('troupedesechappees://verification-ok');
         }
 
-        return new RedirectResponse('troupedesechappees://verification-ok');
+        return new RedirectResponse('http://tie.test/index.html#/verification-ok');
     }
 }
