@@ -19,8 +19,11 @@ class ResetPasswordController extends AbstractController
   private MailerInterface $mailer;
   private EntityManagerInterface $entityManager;
 
-  public function __construct(ResetPasswordHelperInterface $resetPasswordHelper, MailerInterface $mailer, EntityManagerInterface $entityManager)
-  {
+  public function __construct(
+    ResetPasswordHelperInterface $resetPasswordHelper,
+    MailerInterface $mailer,
+    EntityManagerInterface $entityManager
+  ) {
     $this->resetPasswordHelper = $resetPasswordHelper;
     $this->mailer = $mailer;
     $this->entityManager = $entityManager;
@@ -39,30 +42,40 @@ class ResetPasswordController extends AbstractController
     $user = $userRepository->findOneBy(['email' => $email]);
 
     if (!$user) {
-      // Pour ne pas révéler si un utilisateur existe ou non
       return $this->json(['message' => 'Si cet email existe, un lien a été envoyé.']);
     }
 
     $resetToken = $this->resetPasswordHelper->generateResetToken($user);
 
-    // Envoi de l'email
+    // 💡 Détection mobile ou web via User-Agent
+    $ua = strtolower($request->headers->get('User-Agent', ''));
+    $isMobile = str_contains($ua, 'android') || str_contains($ua, 'iphone');
+
+    $token = $resetToken->getToken();
+
+    $link = $isMobile
+      ? "troupedesechappees://reset-password?token=$token"
+      : "http://tie.test/index.html#/reset-password?token=$token";
+
+    $html = "
+      <p>Bonjour,</p>
+      <p>Vous avez demandé à réinitialiser votre mot de passe pour accéder à votre compte La Troupe des Échappées.</p>
+      <p>Veuillez cliquer sur le bouton ci-dessous :</p>
+      <p>
+          <a href=\"$link\" 
+          style=\"background-color:#6A0DAD;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;font-family:Poppins;font-size:16px;\">
+          Réinitialiser mon mot de passe
+          </a>
+      </p>
+      <p>Si vous n'avez pas demandé cette réinitialisation, ignorez simplement cet e-mail.</p>
+      <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
+    ";
+
     $emailMessage = (new Email())
       ->from('noreply@latroupedesechappees.fr')
       ->to($user->getEmail())
       ->subject('Réinitialisation de votre mot de passe')
-      ->html('
-        <p>Bonjour,</p>
-        <p>Vous avez demandé à réinitialiser votre mot de passe pour accéder à votre compte La Troupe des Échappées.</p>
-        <p>Veuillez cliquer sur le bouton ci-dessous :</p>
-        <p>
-            <a href="troupedesechappees://reset-password?token=' . $resetToken->getToken() . '" 
-            style="background-color:#6A0DAD;color:white;padding:12px 24px;text-decoration:none;border-radius:8px;font-family:Poppins;font-size:16px;">
-             Réinitialiser mon mot de passe
-        </a>
-        </p>
-        <p>Si vous n\'avez pas demandé cette réinitialisation, ignorez simplement cet e-mail.</p>
-        <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
-    ');
+      ->html($html);
 
     $this->mailer->send($emailMessage);
 
@@ -93,17 +106,17 @@ class ResetPasswordController extends AbstractController
     $this->entityManager->flush();
     $this->resetPasswordHelper->removeResetRequest($token);
 
-    // ✉️ Nouveau : Envoi d'un mail de confirmation
+    // 🟣 Mail de confirmation
     $confirmationEmail = (new Email())
       ->from('noreply@latroupedesechappees.fr')
       ->to($user->getEmail())
       ->subject('Votre mot de passe a été changé')
       ->html('
-            <p>Bonjour,</p>
-            <p>Votre mot de passe a été modifié avec succès pour votre compte La Troupe des Échappées.</p>
-            <p>Si vous n\'êtes pas à l\'origine de ce changement, veuillez nous contacter immédiatement.</p>
-            <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
-        ');
+        <p>Bonjour,</p>
+        <p>Votre mot de passe a été modifié avec succès pour votre compte La Troupe des Échappées.</p>
+        <p>Si vous n\'êtes pas à l\'origine de ce changement, veuillez nous contacter immédiatement.</p>
+        <p>À très bientôt !<br>La Troupe des Échappées 🎭</p>
+      ');
 
     $this->mailer->send($confirmationEmail);
 
