@@ -42,7 +42,7 @@ class Event
     private ?string $description = null;
 
     #[Groups(['event:read', 'event:write'])]
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateEvent = null;
 
     #[Groups(['event:read', 'event:write'])]
