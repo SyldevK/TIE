@@ -73,10 +73,17 @@ class Event
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'event')]
     private Collection $media;
 
+    /**
+     * @var Collection<int, EventDate>
+     */
+    #[ORM\OneToMany(targetEntity: EventDate::class, mappedBy: 'datetime')]
+    private Collection $eventDates;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->eventDates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -230,6 +237,36 @@ class Event
             // set the owning side to null (unless already changed)
             if ($medium->getEvent() === $this) {
                 $medium->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventDate>
+     */
+    public function getEventDates(): Collection
+    {
+        return $this->eventDates;
+    }
+
+    public function addEventDate(EventDate $eventDate): static
+    {
+        if (!$this->eventDates->contains($eventDate)) {
+            $this->eventDates->add($eventDate);
+            $eventDate->setDatetime($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventDate(EventDate $eventDate): static
+    {
+        if ($this->eventDates->removeElement($eventDate)) {
+            // set the owning side to null (unless already changed)
+            if ($eventDate->getDatetime() === $this) {
+                $eventDate->setDatetime(null);
             }
         }
 
