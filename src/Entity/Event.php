@@ -21,7 +21,6 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isVisible'])]
 #[ApiFilter(SearchFilter::class, properties: ['lieu' => 'partial'])]
-#[ApiFilter(DateFilter::class, properties: ['dateEvent'])]
 
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -40,10 +39,6 @@ class Event
     #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
-
-    #[Groups(['event:read', 'event:write'])]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateEvent = null;
 
     #[Groups(['event:read', 'event:write'])]
     #[ORM\Column(length: 255)]
@@ -76,14 +71,15 @@ class Event
     /**
      * @var Collection<int, EventDate>
      */
-    #[ORM\OneToMany(targetEntity: EventDate::class, mappedBy: 'datetime')]
-    private Collection $eventDates;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: EventDate::class, cascade: ['persist', 'remove'])]
+    #[Groups(['event:read', 'event:write'])]
+    private Collection $dates;
 
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->media = new ArrayCollection();
-        $this->eventDates = new ArrayCollection();
+        $this->dates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,18 +107,6 @@ class Event
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getDateEvent(): ?\DateTimeInterface
-    {
-        return $this->dateEvent;
-    }
-
-    public function setDateEvent(\DateTimeInterface $dateEvent): static
-    {
-        $this->dateEvent = $dateEvent;
 
         return $this;
     }
@@ -176,11 +160,6 @@ class Event
         $this->isVisible = $isVisible;
 
         return $this;
-    }
-
-    public function getDateFormattee(): string
-    {
-        return $this->dateEvent->format('d/m/Y à H\hi');
     }
 
     /**
@@ -243,33 +222,27 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection<int, EventDate>
-     */
-    public function getEventDates(): Collection
+    public function getDates(): Collection
     {
-        return $this->eventDates;
+        return $this->dates;
     }
 
-    public function addEventDate(EventDate $eventDate): static
+    public function addDate(EventDate $date): static
     {
-        if (!$this->eventDates->contains($eventDate)) {
-            $this->eventDates->add($eventDate);
-            $eventDate->setDatetime($this);
+        if (!$this->dates->contains($date)) {
+            $this->dates->add($date);
+            $date->setEvent($this);
         }
-
         return $this;
     }
 
-    public function removeEventDate(EventDate $eventDate): static
+    public function removeDate(EventDate $date): static
     {
-        if ($this->eventDates->removeElement($eventDate)) {
-            // set the owning side to null (unless already changed)
-            if ($eventDate->getDatetime() === $this) {
-                $eventDate->setDatetime(null);
+        if ($this->dates->removeElement($date)) {
+            if ($date->getEvent() === $this) {
+                $date->setEvent(null);
             }
         }
-
         return $this;
     }
 }

@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\EventDateRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EventDateRepository::class)]
 #[ApiResource]
@@ -15,23 +17,39 @@ class EventDate
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'eventDates')]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['event:read'])]
+    private ?\DateTimeInterface $dateTime = null;
+
+    #[ORM\ManyToOne(inversedBy: 'dates')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?event $datetime = null;
+    private ?Event $event = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDatetime(): ?event
+    public function getDateTime(): ?\DateTimeInterface
     {
-        return $this->datetime;
+        return $this->dateTime;
     }
 
-    public function setDatetime(?event $datetime): static
+    public function setDateTime(?\DateTimeInterface $dateTime): static
     {
-        $this->datetime = $datetime;
+        $this->dateTime = $dateTime;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
 
         return $this;
     }
