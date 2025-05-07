@@ -48,7 +48,7 @@ class AppFixtures extends Fixture
             $event->setDescription($faker->paragraph());
             $event->setDateEvent($faker->dateTimeBetween('+1 week', '+2 months'));
             $event->setLieu($faker->city());
-            $event->setImageUrl('https://via.placeholder.com/300x200');
+            $event->setImageUrl('/uploads/images/affiche2024.png');
             $event->setCreatedAt(new \DateTimeImmutable());
             $event->setIsVisible(true);
 

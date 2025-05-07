@@ -24,6 +24,7 @@ class EventCrudController extends AbstractCrudController
             TextField::new('titre', 'Titre'),
             TextareaField::new('description', 'Description')->hideOnIndex(),
             TextField::new('lieu', 'Lieu'),
+            TextField::new('image_url', 'image_url'),
             DateTimeField::new('dateEvent', 'Date du spectacle'),
             BooleanField::new('isVisible', 'Visible ?'),
         ];
