@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Entity\EventDate;
 use App\Entity\Event;
 use App\Entity\Participant;
 use App\Entity\Enrollment;
@@ -25,7 +26,8 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
         $users = [];
-        // Création de 5 utilisateurs fictifs
+
+        // Utilisateurs
         for ($i = 0; $i < 5; $i++) {
             $user = new User();
             $user->setNom($faker->lastName());
@@ -40,23 +42,65 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $users[] = $user;
         }
-        // -------- Création des événements --------
+
+        // === Événements et Dates ===
         $events = [];
-        for ($i = 0; $i < 3; $i++) {
-            $event = new Event();
-            $event->setTitre($faker->sentence(4));
-            $event->setDescription($faker->paragraph());
-            $event->setDateEvent($faker->dateTimeBetween('+1 week', '+2 months'));
-            $event->setLieu($faker->city());
-            $event->setImageUrl('/uploads/images/affiche2024.png');
-            $event->setCreatedAt(new \DateTimeImmutable());
-            $event->setIsVisible(true);
 
-            $manager->persist($event);
-            $events[] = $event;
-        }
+        $event1 = new Event();
+        $event1->setTitre("L'industrie des voeux / Le cheveu aux poudres")
+            ->setDescription("Deux spectacles proposés par les enfants de l'atelier théâtre.\nEncadré par Juliette Douzet.\nEntrée libre et gratuite.")
+            ->setLieu("Cintré – Salle théâtre, étage de l’Omnisport")
+            ->setImageUrl('/uploads/images/affiche2023.png')
+            ->setIsVisible(true)
+            ->setCreatedAt(new \DateTimeImmutable());
+        $manager->persist($event1);
+        $events[] = $event1;
 
-        // -------- Participants + Enrollments --------
+        $d1a = new EventDate();
+        $d1a->setDatetime(new \DateTime('2023-06-08 20:00'))->setEvent($event1);
+        $manager->persist($d1a);
+
+        $d1b = new EventDate();
+        $d1b->setDatetime(new \DateTime('2023-06-09 15:00'))->setEvent($event1);
+        $manager->persist($d1b);
+
+        $event2 = new Event();
+        $event2->setTitre('Mon prof est un troll / Le cahier magique')
+            ->setDescription("Deux spectacles proposés par les enfants de l'atelier théâtre.\nDes textes de Juliette Douzet.\nEntrée libre et gratuite.")
+            ->setLieu("Cintré – Salle théâtre, étage de l’Omnisport")
+            ->setImageUrl('/uploads/images/affiche2024.png')
+            ->setIsVisible(true)
+            ->setCreatedAt(new \DateTimeImmutable());
+        $manager->persist($event2);
+        $events[] = $event2;
+
+        $d2a = new EventDate();
+        $d2a->setDatetime(new \DateTime('2024-06-02 20:00'))->setEvent($event2);
+        $manager->persist($d2a);
+
+        $d2b = new EventDate();
+        $d2b->setDatetime(new \DateTime('2024-06-03 15:00'))->setEvent($event2);
+        $manager->persist($d2b);
+
+        $event3 = new Event();
+        $event3->setTitre("La culotte de Jean ANOUILH / Les enchaînés (de Philippe DORIN)")
+            ->setDescription("Deux spectacles proposés par les enfants, ados et adultes de l’atelier théâtre.\nEncadré par MEVENA PIEL.\nEntrée libre et gratuite.")
+            ->setLieu("Cintré – Salle théâtre, étage de l’Omnisport")
+            ->setImageUrl('/uploads/images/affiche2025.jpg')
+            ->setIsVisible(true)
+            ->setCreatedAt(new \DateTimeImmutable());
+        $manager->persist($event3);
+        $events[] = $event3;
+
+        $d3a = new EventDate();
+        $d3a->setDatetime(new \DateTime('2025-06-21 19:30'))->setEvent($event3);
+        $manager->persist($d3a);
+
+        $d3b = new EventDate();
+        $d3b->setDatetime(new \DateTime('2025-06-22 14:30'))->setEvent($event3);
+        $manager->persist($d3b);
+
+        // Participants et inscriptions
         for ($i = 0; $i < 5; $i++) {
             $participant = new Participant();
             $participant->setPrenom($faker->firstName());
@@ -76,7 +120,7 @@ class AppFixtures extends Fixture
             $manager->persist($enrollment);
         }
 
-        // -------- Création des réservations --------
+        // Réservations
         for ($i = 0; $i < 5; $i++) {
             $reservation = new Reservation();
             $reservation->setNombrePlaces(rand(1, 4));
