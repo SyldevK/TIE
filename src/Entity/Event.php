@@ -134,8 +134,11 @@ class Event
 
     public function getImageUrl(): ?string
     {
-        return $this->imageUrl;
+        return $this->imageUrl !== null
+            ? str_replace('\\', '/', $this->imageUrl)
+            : null;
     }
+
 
     public function setImageUrl(?string $imageUrl): static
     {
