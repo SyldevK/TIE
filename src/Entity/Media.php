@@ -9,8 +9,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['enrollment:read']],
-    denormalizationContext: ['groups' => ['enrollment:write']]
+    normalizationContext: ['groups' => ['media:read']],
+    denormalizationContext: ['groups' => ['media:write']]
 )]
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
@@ -23,11 +23,11 @@ class Media
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['enrollment:read', 'enrollment:write'])]
+    #[Groups(['media:read', 'media:write'])]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['enrollment:read', 'enrollment:write'])]
+    #[Groups(['media:read', 'media:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]

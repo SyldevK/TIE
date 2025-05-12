@@ -68,7 +68,6 @@ class ImportEventsCommand extends Command
             $event = new Event();
             $event->setTitre($data['titre']);
             $event->setDescription($data['description']);
-            $event->setDateEvent($data['date']);
             $event->setLieu($data['lieu']);
             $event->setIsVisible($data['isVisible']);
             $event->setCreatedAt(new \DateTimeImmutable());
