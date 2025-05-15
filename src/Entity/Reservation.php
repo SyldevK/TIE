@@ -13,31 +13,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
     denormalizationContext: ['groups' => ['reservation:write']]
 )]
 
-
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['reservation:read'])]
+    #[Groups(['reservation:read', 'reservation:write'])]
     private ?int $id = null;
 
     #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column]
     private ?int $nombrePlaces = null;
 
-    #[Groups(['reservation:read'])]
+    #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateReservation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[Groups(['reservation:read', 'reservation:write'])]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+
+    #[Groups(['reservation:read', 'reservation:write'])]
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
+
 
     public function getId(): ?int
     {
