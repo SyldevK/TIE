@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Reservation;
 use App\Entity\Enrollment;
+use App\Entity\PlanningCours;
 use App\Controller\Admin\EventCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -34,7 +35,7 @@ class AdminDashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('<img src="/images/logo_tie.png" alt="Logo TIE" height="40"> Théâtre TIE - Admin')
+            ->setTitle('<img src="/images/logo_tie.png" alt="Logo TIE" height="40"> Théâtre La troupe des échappées - Admin')
             ->setFaviconPath('/images/logo_tie.png')
             ->renderContentMaximized()
             ->disableDarkMode();
@@ -51,6 +52,9 @@ class AdminDashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Événements', 'fa fa-calendar', Event::class);
         yield MenuItem::linkToCrud('Réservations', 'fa fa-ticket', Reservation::class);
         yield MenuItem::linkToCrud('Médias', 'fa fa-image', Media::class);
+        yield MenuItem::linkToCrud('Planning', 'fa fa-calendar-alt', PlanningCours::class);
+        yield MenuItem::linkToRoute('Générer le planning PDF', 'fa fa-file-pdf', 'generate_planning_pdf');
+
 
         yield MenuItem::section('Retour au site');
         yield MenuItem::linkToUrl('Voir le site public', 'fa fa-arrow-left', '/');

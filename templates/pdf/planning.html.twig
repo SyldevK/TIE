@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Planning TIE</title>
+
+    <style>
+    {{ source('@public/pdf/pdf-style.css') }}
+    </style>
+</head>
+<body>
+    <header>
+       <img src="file://{{ logoPath }}" alt="Logo TIE" height="50">
+        <h1>Planning des cours & répétitions</h1>
+        <div class="sub">La Troupe des Échappées – Saison {{ "now"|date("Y") }}</div>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Groupe</th>
+                <th>Jour</th>
+                <th>Heure</th>
+                <th>Lieu</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in cours %}
+                <tr>
+                    <td>{{ c.groupe }}</td>
+                    <td>{{ c.jour }}</td>
+                    <td>{{ c.heureDebut|date('H:i') }} - {{ c.heureFin|date('H:i') }}</td>
+                    <td>{{ c.lieu ?? "-" }}</td>
+                    <td>{{ c.type|capitalize }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">Aucun créneau pour l’instant.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        © {{ "now"|date("Y") }} La Troupe des Échappées — Document généré automatiquement
+    </div>
+</body>
+</html>
