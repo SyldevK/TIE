@@ -13,6 +13,19 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        # 🔐 Formulaire pour EasyAdmin
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: /admin
+            logout:
+                path: app_logout
+                target: /
+
+        # 🔐 Auth API JWT
         login:
             pattern: ^/api/login
             stateless: true
@@ -23,6 +36,7 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
         public:
             pattern: ^/api/(register|forgot-password|reset-password|docs|contexts)
             stateless: true
@@ -35,8 +49,8 @@ security:
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-
-    # Auth et accès publics
+        - { path: ^/login, roles: PUBLIC_ACCESS }         # 🆕 Autoriser la page login
+        - { path: ^/logout, roles: PUBLIC_ACCESS }        # 🆕 Autoriser la déconnexion
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/forgot-password, roles: PUBLIC_ACCESS }
@@ -45,17 +59,10 @@ security:
         - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
         - { path: ^/api/media, roles: PUBLIC_ACCESS }
         - { path: ^/api/events, roles: PUBLIC_ACCESS, methods: [GET] }
-        
-
-    # Logs : réservés aux admins
         - { path: ^/api/logs, roles: ROLE_ADMIN }
-
-    # Accès aux utilisateurs connectés    
         - { path: ^/api/reservations, roles: ROLE_USER }
         - { path: ^/api/enrollments, roles: ROLE_USER }
         - { path: ^/api/me, roles: ROLE_USER }
-
-    # Fallback général pour toutes les autres routes protégées
         - { path: ^/api/(?!docs|contexts|login).*, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
