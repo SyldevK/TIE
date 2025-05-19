@@ -10,7 +10,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class EventCrudController extends AbstractCrudController
 {
@@ -19,33 +20,54 @@ class EventCrudController extends AbstractCrudController
         return Event::class;
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setPageTitle('new', 'Ajouter un spectacle')
+            ->setFormThemes(['@EasyAdmin/crud/form_theme.html.twig'])
+            ->overrideTemplate('crud/new', 'admin/event/new.html.twig');
+    }
+
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->onlyOnIndex(),
-
-            TextField::new('titre', 'Titre'),
+            TextField::new('titre', 'Titre du spectacle')
+                ->setHelp('Nom complet ou titre d’affiche du spectacle.'),
 
             TextareaField::new('description', 'Description')
+                ->setHelp('Résumé, ambiance ou info complémentaire')
                 ->hideOnIndex(),
 
-            TextField::new('lieu', 'Lieu'),
+            TextField::new('lieu', 'Lieu')
+                ->setHelp('Ex : Salle théâtre – Étage de l’Omnisport'),
 
-            ImageField::new('imageUrl', 'Affiche')
+            ImageField::new('imageUrl', 'Affiche (fichier image)')
                 ->setBasePath('/uploads/images')
                 ->setUploadDir('public/uploads/images')
                 ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
+                ->setHelp('Format conseillé : JPG ou PNG, max 2 Mo')
                 ->setRequired(false)
                 ->onlyOnForms(),
 
-            ImageField::new('imageUrl', 'Affiche') // affichage dans la liste
+            ImageField::new('imageUrl', 'Affiche')
                 ->setBasePath('/uploads/images')
                 ->onlyOnIndex(),
 
-            BooleanField::new('isVisible', 'Visible ?'),
+            BooleanField::new('isVisible', 'Visible sur le site ?')
+                ->setHelp('Activez pour rendre le spectacle public.'),
 
             CollectionField::new('dates', 'Dates de représentation')
-                ->useEntryCrudForm()
+                ->allowAdd()
+                ->allowDelete()
+                ->setEntryType(DateTimeType::class)
+                ->setFormTypeOptions([
+                    'entry_options' => [
+                        'label' => false,
+                        'widget' => 'single_text',
+                        'html5' => true,
+                    ],
+                ])
+                ->setHelp('Ajoutez chaque représentation avec sa date et heure.')
                 ->onlyOnForms(),
         ];
     }

@@ -25,3 +25,30 @@ button, .btn {
   color: white !important;
   border-radius: 8px;
 }
+
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.85em;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 0.25rem;
+}
+
+.badge-purple {
+  background-color: #ab47bc;
+  color: #fff;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.badge-danger {
+  background-color: #e53935;
+  color: #fff;
+}
+

@@ -94,4 +94,18 @@ class Reservation
 
         return $this;
     }
+
+    public function getNomCompletUser(): ?string
+    {
+        return $this->user
+            ? $this->user->getPrenom() . ' ' . $this->user->getNom()
+            : null;
+    }
+
+    public function getTitreEvent(): ?string
+    {
+        return $this->event
+            ? $this->event->getTitre()
+            : null;
+    }
 }

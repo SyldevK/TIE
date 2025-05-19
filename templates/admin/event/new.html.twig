@@ -1,0 +1,13 @@
+{% extends '@EasyAdmin/crud/new.html.twig' %}
+
+{% block page_content %}
+    {{ parent() }}
+
+    <div class="ea-info-help mt-4 p-3" style="background: #f6f0fb; border-left: 4px solid #6C3A87; border-radius: 4px; color: #333;">
+        <strong>ℹ️ Astuce :</strong>
+        <ul style="margin: 8px 0 0 1rem; padding: 0;">
+            <li><strong>Créer</strong> : enregistre et retourne à la liste des spectacles.</li>
+            <li><strong>Créer et ajouter un autre</strong> : enregistre et ouvre un nouveau formulaire vierge.</li>
+        </ul>
+    </div>
+{% endblock %}

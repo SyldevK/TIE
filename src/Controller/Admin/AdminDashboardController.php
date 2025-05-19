@@ -6,6 +6,7 @@ use App\Entity\Media;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Reservation;
+use App\Entity\Enrollment;
 use App\Controller\Admin\EventCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -46,6 +47,7 @@ class AdminDashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Gestion');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
+        yield MenuItem::linkToCrud('Inscriptions ateliers', 'fa fa-chalkboard-teacher', Enrollment::class);
         yield MenuItem::linkToCrud('Événements', 'fa fa-calendar', Event::class);
         yield MenuItem::linkToCrud('Réservations', 'fa fa-ticket', Reservation::class);
         yield MenuItem::linkToCrud('Médias', 'fa fa-image', Media::class);

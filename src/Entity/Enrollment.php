@@ -118,4 +118,11 @@ class Enrollment
             ? $this->participant->getPrenom() . ' ' . $this->participant->getNom()
             : null;
     }
+
+    public function getNomCompletUser(): ?string
+    {
+        return $this->user
+            ? $this->user->getPrenom() . ' ' . $this->user->getNom()
+            : null;
+    }
 }
