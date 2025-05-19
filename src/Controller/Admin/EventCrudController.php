@@ -10,7 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 
 class EventCrudController extends AbstractCrudController
 {
@@ -32,24 +32,20 @@ class EventCrudController extends AbstractCrudController
             TextField::new('lieu', 'Lieu'),
 
             ImageField::new('imageUrl', 'Affiche')
-                ->setBasePath('/uploads/images/')
-                ->setUploadDir('public/uploads/images/')
+                ->setBasePath('/uploads/images')
+                ->setUploadDir('public/uploads/images')
                 ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
-                ->setRequired(false),
+                ->setRequired(false)
+                ->onlyOnForms(),
 
+            ImageField::new('imageUrl', 'Affiche') // affichage dans la liste
+                ->setBasePath('/uploads/images')
+                ->onlyOnIndex(),
 
             BooleanField::new('isVisible', 'Visible ?'),
 
             CollectionField::new('dates', 'Dates de représentation')
-                ->allowAdd()
-                ->allowDelete()
-                ->setEntryType(DateTimeType::class)
-                ->setFormTypeOptions([
-                    'entry_options' => [
-                        'label' => false,
-                        'widget' => 'single_text',
-                    ],
-                ])
+                ->useEntryCrudForm()
                 ->onlyOnForms(),
         ];
     }

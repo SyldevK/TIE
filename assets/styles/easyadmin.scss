@@ -1,0 +1,27 @@
+// Fichier easyadmin.scss pour personnalisation
+// Tu peux changer toutes les couleurs ici
+
+:root {
+  --primary: #6a1b9a;         // violet profond
+  --secondary: #ab47bc;       // violet clair
+  --text-color: #ffffff;
+  --background-color: #f9f4fb;
+}
+
+// Personnalisation globale
+body {
+  background-color: var(--background-color);
+  font-family: 'Poppins', sans-serif;
+}
+
+// Titre EasyAdmin
+.ea-header__title {
+  color: var(--primary);
+}
+
+// Boutons
+button, .btn {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border-radius: 8px;
+}

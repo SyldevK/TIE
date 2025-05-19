@@ -10,6 +10,7 @@ use App\Controller\Admin\EventCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ class AdminDashboardController extends AbstractDashboardController
     {
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
 
-        // Redirige vers la page de gestion des événements (tu peux changer EventCrudController par un autre)
+        // Redirige vers la page de gestion des événements
         $url = $adminUrlGenerator->setController(EventCrudController::class)->generateUrl();
 
         return $this->redirect($url);
@@ -32,10 +33,12 @@ class AdminDashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('🎭 Théâtre TIE - Admin')
+            ->setTitle('<img src="/images/logo_tie.png" alt="Logo TIE" height="40"> Théâtre TIE - Admin')
+            ->setFaviconPath('/images/logo_tie.png')
             ->renderContentMaximized()
             ->disableDarkMode();
     }
+
 
     public function configureMenuItems(): iterable
     {
@@ -49,5 +52,11 @@ class AdminDashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Retour au site');
         yield MenuItem::linkToUrl('Voir le site public', 'fa fa-arrow-left', '/');
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addWebpackEncoreEntry('easyadmin');
     }
 }
