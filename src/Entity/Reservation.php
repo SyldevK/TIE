@@ -41,6 +41,23 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
+    #[Groups(['reservation:read', 'reservation:write'])]
+    #[ORM\ManyToOne(targetEntity: EventDate::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?EventDate $eventDate = null;
+
+    public function getEventDate(): ?EventDate
+    {
+        return $this->eventDate;
+    }
+
+    public function setEventDate(?EventDate $eventDate): static
+    {
+        $this->eventDate = $eventDate;
+        return $this;
+    }
+
+
 
     public function getId(): ?int
     {

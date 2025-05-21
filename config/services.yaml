@@ -7,7 +7,7 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'  # OK ici si tu ne veux pas que les entités soient autowirées
+            # - '../src/Entity/'  # OK ici si tu ne veux pas que les entités soient autowirées
             - '../src/Kernel.php'
 
     App\Controller\EmailVerificationController:

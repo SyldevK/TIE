@@ -32,7 +32,7 @@ class Event
     #[Groups(['event:read', 'reservation:read', 'media:read'])]
     private ?int $id = null;
 
-    #[Groups(['event:read', 'event:write'])]
+    #[Groups(['event:read', 'event:write', 'reservation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 

@@ -8,13 +8,13 @@ security:
                 class: App\Entity\User
                 property: email
 
-    firewalls:
+    firewalls:  # ✅ ICI ! Les firewalls doivent être sous cette clé
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        # 🔐 Formulaire pour EasyAdmin
         main:
+            pattern: ^/admin
             lazy: true
             provider: app_user_provider
             form_login:
@@ -25,7 +25,6 @@ security:
                 path: app_logout
                 target: /
 
-        # 🔐 Auth API JWT
         login:
             pattern: ^/api/login
             stateless: true
@@ -37,11 +36,6 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        public:
-            pattern: ^/api/(register|forgot-password|reset-password|docs|contexts)
-            stateless: true
-            provider: app_user_provider
-
         api:
             pattern: ^/api
             stateless: true
@@ -49,8 +43,8 @@ security:
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/login, roles: PUBLIC_ACCESS }         # 🆕 Autoriser la page login
-        - { path: ^/logout, roles: PUBLIC_ACCESS }        # 🆕 Autoriser la déconnexion
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/forgot-password, roles: PUBLIC_ACCESS }
@@ -64,6 +58,7 @@ security:
         - { path: ^/api/enrollments, roles: ROLE_USER }
         - { path: ^/api/me, roles: ROLE_USER }
         - { path: ^/api/(?!docs|contexts|login).*, roles: IS_AUTHENTICATED_FULLY }
+
 
 when@test:
     security:

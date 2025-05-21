@@ -18,7 +18,7 @@ class EventDate
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['event:read'])]
+    #[Groups(['event_date:read', 'reservation:read', 'event:read'])]
     private ?\DateTimeInterface $dateTime = null;
 
     #[ORM\ManyToOne(inversedBy: 'dates')]
