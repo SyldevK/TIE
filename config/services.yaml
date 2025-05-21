@@ -13,4 +13,6 @@ services:
     App\Controller\EmailVerificationController:
         tags: ['controller.service_arguments']
 
-    
+    App\Controller\AuthController:
+        public: true
+        tags: ['controller.service_arguments']

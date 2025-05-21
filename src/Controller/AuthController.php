@@ -1,6 +1,5 @@
 <?php
 
-// src/Controller/AuthController.php
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,10 +22,6 @@ class AuthController
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
 
-        if (!$email || !$password) {
-            return new JsonResponse(['error' => 'Champs manquants'], 400);
-        }
-
         $user = $userRepo->findOneBy(['email' => $email]);
 
         if (!$user || !$hasher->isPasswordValid($user, $password)) {
@@ -34,7 +29,6 @@ class AuthController
         }
 
         $token = $jwt->create($user);
-
         return new JsonResponse(['token' => $token]);
     }
 }
