@@ -29,7 +29,7 @@ class InscriptionAtelierController
             'participant' => "$prenom $nom",
             'user' => "$prenom $nom",
             'groupe' => $atelier,
-            'annee' => date('Y'), // ou autre valeur par défaut
+            'annee' => date('Y'),
         ]);
 
         try {
