@@ -43,24 +43,33 @@ class InscriptionAtelierController
             return new JsonResponse(['error' => 'Accès interdit. Veuillez vous connecter.'], 403);
         }
 
-        // ✅ Données envoyées depuis Flutter/Postman
+        // Récupération des données envoyées depuis Flutter/Postman
         $data = json_decode($request->getContent(), true);
 
         $nom = $data['nom'] ?? '';
         $prenom = $data['prenom'] ?? '';
+        $dateNaissanceStr = $data['date_naissance'] ?? null;
         $atelier = $data['atelier'] ?? '';
 
-        if (!$nom || !$prenom || !$atelier) {
+        // Validation des champs obligatoires
+        if (!$nom || !$prenom || !$dateNaissanceStr || !$atelier) {
             return new JsonResponse(['error' => 'Champs manquants'], 400);
         }
 
-        // 👶 Création du participant
+        // Conversion de la date de naissance au format DateTime
+        $dateNaissance = \DateTime::createFromFormat('d/m/Y', $dateNaissanceStr);
+        if (!$dateNaissance) {
+            return new JsonResponse(['error' => 'Format date de naissance invalide'], 400);
+        }
+
+        // Création du participant
         $participant = new Participant();
         $participant->setNom($nom);
         $participant->setPrenom($prenom);
+        $participant->setDateNaissance($dateNaissance);
         $this->em->persist($participant);
 
-        // 📝 Création de l’inscription (enrollment)
+        // Création de l’inscription (enrollment)
         $enrollment = new Enrollment();
         $enrollment->setUser($user);
         $enrollment->setParticipant($participant);
@@ -70,7 +79,7 @@ class InscriptionAtelierController
         $this->em->persist($enrollment);
         $this->em->flush();
 
-        // 📬 Envoi de l’email
+        // Envoi de l’email de notification
         $html = $this->twig->render('emails/enrollment_notification.html.twig', [
             'participant' => "$prenom $nom",
             'user' => $user->getNom() . ' ' . $user->getPrenom(),
