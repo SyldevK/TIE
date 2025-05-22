@@ -56,6 +56,7 @@ security:
         - { path: ^/api/events, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/logs, roles: ROLE_ADMIN }
         - { path: ^/api/reservations, roles: ROLE_USER }
+        - { path: ^/api/inscription-atelier, roles: ROLE_USER }
         - { path: ^/api/enrollments, roles: ROLE_USER }
         - { path: ^/api/me, roles: ROLE_USER }
         - { path: ^/api/(?!docs|contexts|login).*, roles: IS_AUTHENTICATED_FULLY }

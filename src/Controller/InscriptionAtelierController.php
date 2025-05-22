@@ -12,66 +12,65 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class InscriptionAtelierController
 {
     private EntityManagerInterface $em;
     private MailerInterface $mailer;
     private Environment $twig;
-    private UserRepository $userRepository;
+    private Security $security;
 
     public function __construct(
         EntityManagerInterface $em,
         MailerInterface $mailer,
         Environment $twig,
-        UserRepository $userRepository
+        Security $security
     ) {
         $this->em = $em;
         $this->mailer = $mailer;
         $this->twig = $twig;
-        $this->userRepository = $userRepository;
+        $this->security = $security;
     }
 
     #[Route('/api/inscription-atelier', name: 'inscription_atelier', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->security->getUser();
+
+        if (!$user || !in_array('ROLE_USER', $user->getRoles())) {
+            return new JsonResponse(['error' => 'Accès interdit. Veuillez vous connecter.'], 403);
+        }
+
+        // ✅ Données envoyées depuis Flutter/Postman
         $data = json_decode($request->getContent(), true);
 
         $nom = $data['nom'] ?? '';
         $prenom = $data['prenom'] ?? '';
-        $email = $data['email'] ?? '';
         $atelier = $data['atelier'] ?? '';
 
-        if (!$nom || !$prenom || !$email || !$atelier) {
+        if (!$nom || !$prenom || !$atelier) {
             return new JsonResponse(['error' => 'Champs manquants'], 400);
         }
 
-        // 🔐 Étape 1 – Récupérer un User fictif ou "anonyme"
-        $user = $this->userRepository->findOneByEmail($email);
-
-        if (!$user) {
-            return new JsonResponse(['error' => 'Utilisateur non trouvé. Veuillez vous connecter.'], 401);
-        }
-
-        // 👶 Étape 2 – Créer le participant
+        // 👶 Création du participant
         $participant = new Participant();
         $participant->setNom($nom);
         $participant->setPrenom($prenom);
-
         $this->em->persist($participant);
 
-        // 📝 Étape 3 – Créer l’enrollment
+        // 📝 Création de l’inscription (enrollment)
         $enrollment = new Enrollment();
         $enrollment->setUser($user);
         $enrollment->setParticipant($participant);
         $enrollment->setGroupe($atelier);
-        $enrollment->setIsActive(false); // à activer manuellement ?
+        $enrollment->setIsActive(false);
         $enrollment->setAnneeScolaire(date('Y'));
-
         $this->em->persist($enrollment);
         $this->em->flush();
 
-        // 📬 Étape 4 – Envoyer l’email
+        // 📬 Envoi de l’email
         $html = $this->twig->render('emails/enrollment_notification.html.twig', [
             'participant' => "$prenom $nom",
             'user' => $user->getNom() . ' ' . $user->getPrenom(),

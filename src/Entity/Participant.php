@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiResource;
     normalizationContext: ['groups' => ['enrollment:read']],
     denormalizationContext: ['groups' => ['enrollment:write']]
 )]
-
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 class Participant
 {
@@ -52,7 +51,6 @@ class Participant
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -64,7 +62,6 @@ class Participant
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -76,7 +73,6 @@ class Participant
     public function setDateNaissance(\DateTimeInterface $dateNaissance): static
     {
         $this->dateNaissance = $dateNaissance;
-
         return $this;
     }
 
@@ -94,6 +90,11 @@ class Participant
         }
 
         return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->enrollment?->getUser();
     }
 
     public function getAge(): int

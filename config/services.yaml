@@ -16,3 +16,12 @@ services:
     App\Controller\AuthController:
         public: true
         tags: ['controller.service_arguments']
+
+    App\Controller\InscriptionAtelierController:
+        arguments:
+            $em: '@doctrine.orm.entity_manager'
+            $mailer: '@mailer.mailer'
+            $twig: '@twig'
+            $security: '@Symfony\Bundle\SecurityBundle\Security'
+        tags: ['controller.service_arguments']
+        public: true

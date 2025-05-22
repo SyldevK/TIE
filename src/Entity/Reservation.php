@@ -31,7 +31,7 @@ class Reservation
     private ?\DateTimeInterface $dateReservation = null;
 
     #[Groups(['reservation:read', 'reservation:write'])]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
@@ -43,7 +43,7 @@ class Reservation
 
     #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\ManyToOne(targetEntity: EventDate::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?EventDate $eventDate = null;
 
     public function getEventDate(): ?EventDate
