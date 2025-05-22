@@ -8,7 +8,7 @@ security:
                 class: App\Entity\User
                 property: email
 
-    firewalls:  # ✅ ICI ! Les firewalls doivent être sous cette clé
+    firewalls:  
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -52,6 +52,7 @@ security:
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
         - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
         - { path: ^/api/media, roles: PUBLIC_ACCESS }
+        - { path: ^/api/contact, roles: PUBLIC_ACCESS}
         - { path: ^/api/events, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/logs, roles: ROLE_ADMIN }
         - { path: ^/api/reservations, roles: ROLE_USER }

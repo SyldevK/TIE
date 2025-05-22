@@ -22,7 +22,6 @@ class ContactController extends AbstractController
             return $this->json(['error' => 'Tous les champs sont obligatoires'], 400);
         }
 
-        // Optionnel : sauvegarder en base
         $contactMessage = new ContactMessage();
         $contactMessage->setNom($data['nom']);
         $contactMessage->setPrenom($data['prenom']);
@@ -31,10 +30,10 @@ class ContactController extends AbstractController
         $em->persist($contactMessage);
         $em->flush();
 
-        // Préparation de l'email
         $email = (new Email())
-            ->from($data['email'])
-            ->to('latroupedesechappees@gmail.com') // destinataire principal
+            ->from('latroupedesechappees@gmail.com')
+            ->replyTo($data['email'])
+            ->to('ayomeguja@gmail.com')
             ->subject('Nouveau message de contact')
             ->text(
                 "Nom: {$data['nom']}\n" .
@@ -46,8 +45,12 @@ class ContactController extends AbstractController
         try {
             $mailer->send($email);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Erreur lors de l\'envoi du mail'], 500);
+            return $this->json([
+                'error' => 'Erreur lors de l\'envoi du mail',
+                'exception' => $e->getMessage()
+            ], 500);
         }
+
 
         return $this->json(['success' => 'Message envoyé'], 200);
     }
