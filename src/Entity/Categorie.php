@@ -77,7 +77,6 @@ class Categorie
     public function removeMedium(Media $medium): static
     {
         if ($this->media->removeElement($medium)) {
-            // set the owning side to null (unless already changed)
             if ($medium->getCategorie() === $this) {
                 $medium->setCategorie(null);
             }
