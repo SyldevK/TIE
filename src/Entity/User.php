@@ -82,6 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reservations = new ArrayCollection();
         $this->enrollments = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->dateInscription = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
