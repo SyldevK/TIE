@@ -1,5 +1,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Permet à PHP d'accéder au header Authorization (pour LexikJWT)
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%1]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]
@@ -7,4 +12,5 @@
 
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Headers "Authorization, Content-Type"
 </IfModule>
