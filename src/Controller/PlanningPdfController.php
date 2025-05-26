@@ -16,15 +16,16 @@ class PlanningPdfController extends AbstractController
     public function generatePdf(PlanningCoursRepository $repository, Environment $twig): Response
     {
         $cours = $repository->findAll();
-        $logoPath = $this->getParameter('kernel.project_dir') . '/public/images/logo_tie.png';
         $html = $twig->render('pdf/planning.html.twig', [
             'cours' => $cours,
-            'logoPath' => $logoPath,
         ]);
+
 
         $options = new Options();
         $options->set('defaultFont', 'Poppins');
         $options->setIsRemoteEnabled(true);
+        $options->set('chroot', $this->getParameter('kernel.project_dir') . '/public');
+
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
