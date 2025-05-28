@@ -14,6 +14,7 @@ Encore
     .addEntry('app', './assets/app.js')
 
     .addEntry('easyadmin', './assets/styles/easyadmin.scss')
+    .addEntry('login', './assets/styles/login.scss')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
 

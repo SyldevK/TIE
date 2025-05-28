@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Doctrine;
 
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Bundle\SecurityBundle\Security; 
 use App\Entity\Reservation;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -46,12 +45,13 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
 
         $user = $this->security->getUser();
 
-        // Les admins voient tout, les autres seulement leurs réservations
-        if ($user && !$this->security->isGranted('ROLE_ADMIN')) {
+        // Tous les utilisateurs (y compris les admins) ne voient que leurs réservations
+        if ($user) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
                 ->andWhere(sprintf('%s.user = :current_user', $rootAlias))
                 ->setParameter('current_user', $user->getId());
         }
     }
+
 }

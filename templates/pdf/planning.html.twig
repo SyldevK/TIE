@@ -11,10 +11,9 @@
 <body>
     <header>
        <img 
-  src="{{ asset('images/logo_tie.png') }}"
+  src="{{ app.request.scheme ~ '://' ~ app.request.host ~ '/images/logo_tie.png' }}"
   alt="Logo TIE"
   style="height:100px;width:100px;object-fit:cover;border-radius:50%;border:3px solid #8E24AA;display:block;margin:auto;">
-
         <h1>Planning des cours & répétitions</h1>
         <div class="sub">La Troupe des Échappées – Saison {{ "now"|date("Y") }}</div>
     </header>
