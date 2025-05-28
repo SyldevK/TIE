@@ -1,15 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-<h1>Connexion</h1>
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('build/login.css') }}">
+{% endblock %}
 
-<form method="post">
-    <input type="text" name="_username" value="{{ last_username }}" placeholder="Email" required>
-    <input type="password" name="_password" placeholder="Mot de passe" required>
-    <button type="submit">Se connecter</button>
+{% block body %}
+<div class="login-container">
+    <img src="{{ asset('images/logo_tie.png') }}" alt="Logo">
+    <h1>Connexion</h1>
 
     {% if error %}
-        <div style="color: red;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        <div class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
-</form>
+
+    <form method="post">
+        <input type="text" name="_username" value="{{ last_username }}" placeholder="Email" required>
+        <input type="password" name="_password" placeholder="Mot de passe" required>
+        <button type="submit">Se connecter</button>
+    </form>
+</div>
 {% endblock %}

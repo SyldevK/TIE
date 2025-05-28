@@ -23,7 +23,7 @@ security:
                 default_target_path: /admin
             logout:
                 path: app_logout
-                target: /
+                target: /login
 
         login:
             pattern: ^/api/login
