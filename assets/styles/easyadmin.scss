@@ -1,5 +1,4 @@
-// Fichier easyadmin.scss pour personnalisation
-// Tu peux changer toutes les couleurs ici
+
 
 :root {
   --primary: #6a1b9a;         // violet profond
@@ -17,6 +16,20 @@ body {
 // Titre EasyAdmin
 .ea-header__title {
   color: var(--primary);
+}
+
+#header-logo .logo-custom img {
+  width: 80px !important;
+  height: 80px !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  border: 3px solid #8E24AA !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+  margin-bottom: 12px !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 // Boutons

@@ -63,6 +63,8 @@ class AdminDashboardController extends AbstractDashboardController
     public function configureAssets(): Assets
     {
         return Assets::new()
-            ->addWebpackEncoreEntry('easyadmin');
+            ->addWebpackEncoreEntry('easyadmin')
+            ->addCssFile('build/login.css')
+            ->addCssFile('build/easyadmin.css');
     }
 }
