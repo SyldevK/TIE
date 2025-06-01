@@ -74,7 +74,7 @@ class InscriptionAtelierController
         $enrollment->setUser($user);
         $enrollment->setParticipant($participant);
         $enrollment->setGroupe($atelier);
-        $enrollment->setIsActive(false);
+        $enrollment->setIsActive(true);
         $enrollment->setAnneeScolaire(date('Y'));
         $this->em->persist($enrollment);
         $this->em->flush();

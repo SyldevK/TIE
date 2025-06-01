@@ -20,7 +20,7 @@ class EnrollmentCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->disable(Action::NEW, Action::EDIT, Action::DELETE); // lecture seule
+            ->disable(Action::NEW,  Action::DELETE);
     }
 
     public function configureFields(string $pageName): iterable
